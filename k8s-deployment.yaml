@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mentalcareai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mentalcareai
+  template:
+    metadata:
+      labels:
+        app: mentalcareai
+    spec:
+      containers:
+        - name: mentalcareai
+          image: mentalcareai:latest
+          ports:
+            - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mentalcareai-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: mentalcareai
+  ports:
+    - port: 80
+      targetPort: 8000
