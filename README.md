@@ -3,18 +3,18 @@ Assistente LLM para Apoio ao Diagnóstico em Saúde Mental em CAPS
 
 Execução
 
-Local
+Local ->
 uvicorn app.main:app --reload
 
-Docker
+Docker ->
 docker build -t mentalcareai .
 
 docker run -p 8000:8000 mentalcareai
 
-Kubernetes
+Kubernetes ->
 kubectl apply -f k8s-deployment.yaml
 
-Testes
+Testes ->
 pytest app/tests/test_api.py
 
 Licença
