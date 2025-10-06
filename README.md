@@ -8,6 +8,7 @@ uvicorn app.main:app --reload
 
 Docker
 docker build -t mentalcareai .
+
 docker run -p 8000:8000 mentalcareai
 
 Kubernetes
