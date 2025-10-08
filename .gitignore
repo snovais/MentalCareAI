@@ -2,3 +2,5 @@ __pycache__/
 .env
 *.pyc
 .ipynb_checkpoints/
+.csv
+./flan-t5-base

@@ -1,8 +1,9 @@
 fastapi
 uvicorn
-openai
 python-dotenv
 pytest
 streamlit
 requests
 nest_asyncio
+transformers
+torch
