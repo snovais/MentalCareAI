@@ -4,7 +4,7 @@ Assistente LLM para Apoio ao Diagnóstico em Saúde Mental em CAPS
 Execução
 
 Local ->
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload and streamlit run frontend/app_frontend.py
 
 Docker ->
 docker build -t mentalcareai .

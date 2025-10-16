@@ -1,29 +1,22 @@
 import streamlit as st
 import requests
 
-st.set_page_config(page_title="MentalCareAI", page_icon="🧠")
+st.title("🧠 MentalCareAI – Diagnóstico Clínico")
 
-st.title("MentalCareAI - Diagnóstico CAPS-AD")
-st.markdown("Cole o relato clínico do paciente abaixo e clique em **Analisar**:")
-
-# Caixa de texto para os sintomas
-sintomas = st.text_area("Relato clínico:", height=200)
+texto = st.text_area("Descreva o caso clínico do paciente:")
 
 if st.button("Analisar"):
-    if sintomas.strip() == "":
-        st.warning("Por favor, insira o relato clínico!")
-    else:
-        with st.spinner("Analisando..."):
-            try:
-                response = requests.post(
-                    "http://127.0.0.1:8000/diagnostico",
-                    json={"sintomas": sintomas}
-                )
-                if response.status_code == 200:
-                    resultado = response.json()["diagnostico"]
-                    st.success("✅ Diagnóstico gerado:")
-                    st.write(resultado)
-                else:
-                    st.error(f"Erro na API: {response.status_code}")
-            except Exception as e:
-                st.error(f"Erro de conexão: {e}")
+    with st.spinner("Analisando..."):
+        try:
+            response = requests.post(
+                "http://127.0.0.1:8000/diagnostico",  # <- importante!
+                json={"sintomas": texto},
+                timeout=60
+            )
+            if response.status_code == 200:
+                st.success(response.json()["resposta"])
+            else:
+                st.error(f"Erro da API ({response.status_code}): {response.text}")
+        except Exception as e:
+            st.error(f"Erro de conexão: {e}")
+            
