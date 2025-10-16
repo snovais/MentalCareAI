@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from app.models.diagnostico_model import SymptomInput
-from app.services.diagnostico_service import get_diagnosis_from_llm
+from app.services.diagnostic_model import SymptomInput
+from app.services.diagnostic_model import get_diagnosis_from_llm
 
 router = APIRouter()
 

@@ -1,59 +1,39 @@
-from transformers import pipeline
+from transformers import pipeline, AutoTokenizer
+
 from app.core.utils import create_prompt
+from pydantic import BaseModel
 
-# Você pode escolher um modelo melhor abaixo
-# Exemplo 1 (leve e rápido): "tiiuae/falcon-7b-instruct"
-# Exemplo 2 (muito leve): "mistralai/Mistral-7B-Instruct-v0.2"
-# Exemplo 3 (voltado a chat): "HuggingFaceH4/zephyr-7b-beta"
+class SymptomInput(BaseModel):
+    sintomas: str
 
-# MODEL_NAME = "tiiuae/falcon-7b-instruct"
-# MODEL_NAME = "google/flan-t5-base"
+# Modelo Flan-T5-small da Hugging Face
+MODEL_NAME = "google/flan-t5-small"
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, clean_up_tokenization_spaces=True)
 
-# # Carrega o pipeline de texto
-# generator = pipeline(
-#     "text-generation",
-#     model=MODEL_NAME,
-#     torch_dtype="auto",
-#     device_map="auto"
-# )
+# Pipeline correto para T5 (seq2seq)
+generator = pipeline(
+    "text2text-generation",
+    model=MODEL_NAME,
+    tokenizer=tokenizer,
+    device_map="cpu"  # usa GPU se disponível
+)
 
-# def get_diagnosis_from_llm(symptoms: str) -> str:
-#     """
-#     Gera diagnóstico baseado nos sintomas informados.
-#     """
-#     prompt = create_prompt(symptoms)
+def get_diagnosis_from_llm(symptoms: str) -> str:
+    """
+    Gera diagnóstico baseado nos sintomas informados.
+    """
+    prompt = create_prompt(symptoms)
     
-#     response = generator(
-#         prompt,
-#         max_new_tokens=300,
-#         temperature=0.6,
-#         do_sample=True,
-#         top_p=0.9
-#     )
-
-#     output_text = response[0]["generated_text"]
-
-#     # Extrai apenas o diagnóstico gerado, removendo o prompt repetido
-#     return output_text[len(prompt):].strip()
-
-from transformers import pipeline
-
-# Carrega o modelo Flan-T5-base (ótimo para tarefas de raciocínio e geração de texto)
-modelo = pipeline("text2text-generation", model="./flan-t5-base")
-
-def analisar_texto(texto: str) -> str:
-    """
-    Analisa o texto do diagnóstico clínico e retorna uma interpretação baseada em sintomas e contexto.
-    """
-    prompt = (
-        "Você é um assistente médico especializado em saúde mental e CAPS-AD. "
-        "Analise o seguinte relato clínico e indique o provável diagnóstico entre: "
-        "Depressão, Ansiedade, Transtorno Bipolar, Esquizofrenia, Dependência Química, ou Sem indícios de transtorno. "
-        "Explique brevemente o motivo. Texto: "
-        f"{texto}"
+    response = generator(
+        prompt,
+        max_new_tokens=150,
+        do_sample=True,
+        temperature=0.6,
+        top_p=0.9
     )
 
-    resultado = modelo(prompt, max_new_tokens=150, temperature=0.7)
-    resposta = resultado[0]['generated_text'].strip()
-    return resposta
+    output_text = response[0]["generated_text"]
+    print(response)
 
+    # Remove o prompt inicial caso seja repetido
+    return output_text[len(prompt):].strip()
